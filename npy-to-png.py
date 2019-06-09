@@ -6,9 +6,22 @@ import numpy as np
 from matplotlib import image
 from random import sample
 import os
+import sys
 
 dir__ = 'raw-dataset'
 __dir = 'dataset'
+n = 1000
+
+if len(sys.argv) == 1:
+    # no extra input, go with the default values
+    pass
+else:
+    try:
+        __dir = sys.argv[1]
+        n = int(sys.argv[2])
+    except:
+        print('use: python npy-to-png.py destination-folder-name 1000')
+        exit()
 
 def extract_n_image(filename, n=1000):
     """Function that randomly selects n (default=1000) numpy array to png formatted images,
@@ -29,7 +42,7 @@ if not os.path.exists(__dir):
 
 # selecting npy files from raw-dataset folder and passing into the extract_n_image function
 for file in os.listdir(dir__):
-    extract_n_image(file)
+    extract_n_image(file, n)
 
 print('Extracted ' + str(len(os.listdir(dir__))) + ' categories in \'' + __dir + '\' folder.')
 # end
