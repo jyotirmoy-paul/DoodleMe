@@ -41,11 +41,8 @@ public class DrawingCanvas extends View {
 
     }
 
-    public void init(DisplayMetrics metrics) {
-        int height = metrics.heightPixels;
-        int width = metrics.widthPixels;
-
-        mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    public void init(DisplayMetrics displayMetrics) {
+        mBitmap = Bitmap.createBitmap(displayMetrics.widthPixels, displayMetrics.heightPixels, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
 
     }
@@ -122,10 +119,9 @@ public class DrawingCanvas extends View {
         invalidate();
     }
 
-    // method that returns the bitmap of drawn image on canvas
-    public double[] getPixelData(){
-
-        Bitmap bitmap = Bitmap.createScaledBitmap(mBitmap, 28,28, false);
+    // method that returns the bitmap of drawn image on canvas - 28 x 28
+    public int[] getPixelData(){
+        Bitmap bitmap = resizeBitmap();
 
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -133,15 +129,56 @@ public class DrawingCanvas extends View {
         // get the pixel data from bitmap
         int[] pixels = new int[width*height];
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+        return pixels;
+    }
 
-        // rescaling the pixels values -  dividing each pixel by 255
-        double[] rescaledPixels = new double[pixels.length];
-        for(int i=0; i<pixels.length; i++){
-            rescaledPixels[i] = ((double)pixels[i])/255.0;
+    // this method is made to resize the final image to 28x28
+    public Bitmap resizeBitmap(){
+
+        Bitmap temp;
+
+        // first down sample the image to 800 x 800 pixels
+        temp = getResizedBitmapWithAdjustment(mBitmap, 800);
+
+        // down sample the image to 400 pixels
+        temp = getResizedBitmapWithAdjustment(temp, 400);
+
+        // down sample the image to 200 pixels
+        temp = getResizedBitmapWithAdjustment(temp, 200);
+
+        // down sample the image to 100 pixel
+        return getResizedBitmapWithAdjustment(temp, 100);/*
+
+        // down sample the image to 50 pixel
+        temp = getResizedBitmapWithAdjustment(temp, 50);
+
+        // finally return the 28x28 pixel bitmap
+        return getResizedBitmapWithAdjustment(temp, 28);*/
+    }
+
+    private Bitmap getResizedBitmapWithAdjustment(Bitmap b, int size){
+
+        // down-sampled the bitmap
+        Bitmap tempBitmap = Bitmap.createScaledBitmap(b, size, size, false);
+
+        // converted the bitmap to array of pixels
+        int[] arr = new int[size*size];
+        tempBitmap.getPixels(arr, 0, size, 0, 0, size, size);
+
+        int WHITE = -1;
+        int BLACK = -16777216;
+
+        // polishing the pixel values
+        for(int i=0; i<arr.length; i++){
+            if(arr[i] != WHITE){
+                arr[i] = BLACK;
+            }
         }
 
-        return rescaledPixels;
-
+        // creating bitmap from polished pixel values
+        Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(arr, 0, size, 0, 0, size, size);
+        return bitmap;
     }
 
 }
