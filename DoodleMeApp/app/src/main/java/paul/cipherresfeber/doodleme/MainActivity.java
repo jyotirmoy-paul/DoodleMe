@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
         drawingCanvas = findViewById(R.id.drawingCanvas);
         drawModel = new DrawModel(480, 480);
-        drawingCanvas.setModel(drawModel, metrics);
+        drawingCanvas.setModel(drawModel);
         drawingCanvas.setOnTouchListener(this);
 
         Button buttonClearDrawingCanvas = findViewById(R.id.btnClearDrawingCanvas);
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
                 Log.i("PREDCITIONS: ", topThreePredictions.toString());
 
+                SaveImage(drawingCanvas.getmOffscreenBitmap());
 
             }
         });

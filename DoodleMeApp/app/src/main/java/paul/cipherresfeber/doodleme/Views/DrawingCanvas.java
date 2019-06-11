@@ -10,12 +10,10 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.View;
 
 public class DrawingCanvas extends View {
 
-    private DisplayMetrics displayMetrics;
 
     private Paint mPaint = new Paint();
     private DrawModel mModel;
@@ -34,8 +32,7 @@ public class DrawingCanvas extends View {
         super(context, attrs);
     }
 
-    public void setModel(DrawModel model, DisplayMetrics displayMetrics) {
-        this.displayMetrics = displayMetrics;
+    public void setModel(DrawModel model) {
         this.mModel = model;
     }
 
@@ -54,8 +51,8 @@ public class DrawingCanvas extends View {
     //create the view, for a given length and width
     private void setup() {
 
-        float width = displayMetrics.widthPixels;
-        float height = displayMetrics.heightPixels;
+        float width = getWidth();
+        float height = getHeight();
 
         float modelWidth = mModel.getWidth();
         float modelHeight = mModel.getHeight();
@@ -136,6 +133,10 @@ public class DrawingCanvas extends View {
         reset();
     }
 
+    public Bitmap getmOffscreenBitmap(){
+        return Bitmap.createScaledBitmap(mOffscreenBitmap, 280,280,false);
+    }
+
     public float[] getPixelData(int size) {
         if (mOffscreenBitmap == null) {
             return null;
@@ -153,6 +154,14 @@ public class DrawingCanvas extends View {
         for (int i=0; i<pixels.length; i++) {
             int pix = pixels[i];
             int b = pix & 0xff;
+            retPixels[i] = (float)(((float)b)/255.0);
+        }
+
+/*
+        float[] retPixels = new float[pixels.length];
+        for (int i=0; i<pixels.length; i++) {
+            int pix = pixels[i];
+            int b = pix & 0xff;
             retPixels[i] = (float)((0xff - b)/255.0);
         }
 
@@ -163,7 +172,7 @@ public class DrawingCanvas extends View {
                 retPixels[i] = 0;
             }
         }
-
+*/
         return retPixels;
     }
 }
