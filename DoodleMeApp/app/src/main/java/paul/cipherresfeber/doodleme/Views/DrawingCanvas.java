@@ -51,8 +51,8 @@ public class DrawingCanvas extends View {
     //create the view, for a given length and width
     private void setup() {
 
-        float width = getWidth();
-        float height = getHeight();
+        float width = mModel.getWidth();
+        float height = mModel.getHeight();
 
         float modelWidth = mModel.getWidth();
         float modelHeight = mModel.getHeight();
@@ -151,10 +151,8 @@ public class DrawingCanvas extends View {
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
         float[] retPixels = new float[pixels.length];
-        for (int i=0; i<pixels.length; i++) {
-            int pix = pixels[i];
-            int b = pix & 0xff;
-            retPixels[i] = (float)(((float)b)/255.0);
+        for(int i=0; i<pixels.length; i++){
+            retPixels[i] = ((float)(0xff & pixels[i]))/255;
         }
 
 /*
@@ -166,11 +164,7 @@ public class DrawingCanvas extends View {
         }
 
         for(int i=0; i<retPixels.length; i++){
-            if(retPixels[i] == 0){
-                retPixels[i] = 1;
-            } else{
-                retPixels[i] = 0;
-            }
+            retPixels[i] = 1 - retPixels[i];
         }
 */
         return retPixels;

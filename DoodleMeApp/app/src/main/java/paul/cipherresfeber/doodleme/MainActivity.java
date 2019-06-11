@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import paul.cipherresfeber.doodleme.CustomData.LabelProbability;
 import paul.cipherresfeber.doodleme.Utility.ProbabilitySorter;
@@ -60,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         drawingCanvas = findViewById(R.id.drawingCanvas);
-        drawModel = new DrawModel(480, 480);
+        drawModel = new DrawModel(metrics.widthPixels, metrics.heightPixels);
         drawingCanvas.setModel(drawModel);
         drawingCanvas.setOnTouchListener(this);
 
@@ -112,7 +110,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 topThreePredictions.add(list.get(3));
                 topThreePredictions.add(list.get(4));
 
-                Log.i("PREDCITIONS: ", topThreePredictions.toString());
+                Toast.makeText(MainActivity.this,
+                        topThreePredictions.toString(), Toast.LENGTH_LONG).show();
 
                 SaveImage(drawingCanvas.getmOffscreenBitmap());
 
@@ -121,15 +120,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     }
 
-    // sort the
-
-
     // read the labels from the asset folder
     private String[] getLabels(){
 
         try{
             BufferedReader abc = new BufferedReader(new InputStreamReader(getAssets().open("labels.txt")));
-            List<String> lines = new ArrayList<String>();
+            List<String> lines = new ArrayList<>();
             String line;
             while((line = abc.readLine()) != null) {
                 lines.add(line);
@@ -175,10 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         if (!myDir.exists()) {
             myDir.mkdirs();
         }
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-" + n + ".jpg";
+        String fname = "sample_image.jpg";
         File file = new File(myDir, fname);
         if (file.exists())
             file.delete();
@@ -202,9 +195,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         if (!myDir.exists()) {
             myDir.mkdirs();
         }
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
         String fname = "file.txt";
         File file = new File (myDir, fname);
         if (file.exists ())
