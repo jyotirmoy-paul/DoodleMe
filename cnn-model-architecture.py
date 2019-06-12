@@ -57,17 +57,27 @@ classifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['
 # image preprocessing before feeding into the CNN
 from keras.preprocessing.image import ImageDataGenerator
 
-data_generator = ImageDataGenerator(rescale=1./255, rotation_range=0.05, validation_split=0.1)
+# well convert all white pixels to 1 and all other pixel values to 0
+def preprocessing(img):
+    for i in range(len(img[0])):
+        for j in range(len(img[0])):
+            if img[i][j] != 255:
+                img[i][j] = 0
+            else:
+                img[i][j] = 1
+    return img
+
+data_generator = ImageDataGenerator(validation_split=0.1, preprocessing_function=preprocessing)
 
 # training data set
 train_set = data_generator.flow_from_directory(
-        'dataset',
+        'temp',
         batch_size=64,
         target_size=(28,28), color_mode='grayscale', subset='training')
 
 # testing/validation data set
 test_set = data_generator.flow_from_directory(
-        'dataset',
+        'temp',
         batch_size=64,
         target_size=(28,28), color_mode='grayscale', subset='validation')
 
