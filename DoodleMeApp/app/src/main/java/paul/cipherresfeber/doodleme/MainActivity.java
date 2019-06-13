@@ -1,5 +1,7 @@
 package paul.cipherresfeber.doodleme;
 
+import android.annotation.SuppressLint;
+import android.app.FragmentTransaction;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,33 +9,83 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-import paul.cipherresfeber.doodleme.CNNModel.PredictionListener;
 import paul.cipherresfeber.doodleme.CNNModel.Predictor;
-import paul.cipherresfeber.doodleme.CustomData.LabelProbability;
+import paul.cipherresfeber.doodleme.Fragments.NameViewFragment;
 import paul.cipherresfeber.doodleme.Views.DrawModel;
 import paul.cipherresfeber.doodleme.Views.DrawingCanvas;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener, View.OnClickListener, PredictionListener {
+public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private DrawingCanvas drawingCanvas;
     private DrawModel drawModel;
     private PointF mTmpPoint = new PointF();
-
     private float mLastX;
     private float mLastY;
 
-    private final int MODEL_IMAGE_INPUT_SIZE = 28;
+    private Predictor predictor;
 
-    Predictor predictor;
+    private ArrayList<String> questions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // method to initialize the canvas drawing and our cnn model
+        initializeCanvasAndModel();
+
+        // the button to clear out the canvas
+        Button buttonClearDrawingCanvas = findViewById(R.id.btnClearDrawingCanvas);
+        buttonClearDrawingCanvas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawModel.clear();
+                drawingCanvas.reset();
+                drawingCanvas.invalidate();
+            }
+        });
+
+        // at this point predictor object has been initialized, read the labels and choose 5 samples
+        ArrayList<String> labels = predictor.getLabels();
+        Collections.shuffle(labels); // shuffle the list
+        questions = new ArrayList<>();
+        for(int i=0; i<5; i++)
+            questions.add(labels.get(i));
+
+        // now show the nameViewFragment
+        NameViewFragment fragment = new NameViewFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_top,
+                R.anim.enter_from_top, R.anim.exit_to_top);
+        transaction.addToBackStack(null);
+        transaction.add(R.id.fragmentContainer, fragment, "NameViewFragment").commit();
+
+        Toast.makeText(this,
+                questions.toString(), Toast.LENGTH_SHORT).show();
+
+
+
+
+//
+//        Timer t = new Timer();
+//        t.scheduleAtFixedRate(new TimerTask(){
+//            @Override
+//            public void run() {
+//                predictor.predict(drawingCanvas.getDrawnBitmap(), 3);
+//            }
+//        }, 1000 /* start the execution after a second*/ , 1500 /* call after every 500ms */ );
+
+    }
+
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initializeCanvasAndModel(){
         // instantiate the predictor
         predictor = new Predictor("cnn-model.tflite",
                 "labels.txt", MainActivity.this);
@@ -45,36 +97,9 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         drawModel = new DrawModel(metrics.widthPixels, (int)((double)metrics.heightPixels*0.70));
         drawingCanvas.setModel(drawModel);
         drawingCanvas.setOnTouchListener(this);
-
-        Button buttonClearDrawingCanvas = findViewById(R.id.btnClearDrawingCanvas);
-        buttonClearDrawingCanvas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawModel.clear();
-                drawingCanvas.reset();
-                drawingCanvas.invalidate();
-            }
-        });
-
-        Button buttonGetPixel = findViewById(R.id.btnGetPixel);
-        buttonGetPixel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                predictor.predict(drawingCanvas.getDrawnBitmap(),3);
-
-            }
-        });
-
     }
 
-    // this method is called every time a new doodle is predicted
-    @Override
-    public void Predicted(ArrayList<LabelProbability> predictions) {
-
-    }
-
-
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction() & MotionEvent.ACTION_MASK;
@@ -116,11 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void processTouchUp() {
         drawModel.endLine();
-    }
-
-    @Override
-    public void onClick(View v) {
-
     }
 
     protected void onResume() {

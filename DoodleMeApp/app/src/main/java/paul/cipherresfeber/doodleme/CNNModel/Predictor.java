@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -16,27 +16,24 @@ import org.tensorflow.lite.Interpreter;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import paul.cipherresfeber.doodleme.CustomData.LabelProbability;
-import paul.cipherresfeber.doodleme.MainActivity;
 import paul.cipherresfeber.doodleme.Utility.ProbabilitySorter;
 
 public class Predictor {
 
     private Context context;
-    private String[] labels;
+    private ArrayList<String> labels;
     private Interpreter tflite;
+
+    private final int MIN_DRAWN_PIXEL = 30;
 
     // initialize the model here
     public Predictor(String tensorflowLiteModelName, String labelFileName,Context context){
@@ -56,10 +53,8 @@ public class Predictor {
 
         // array for storing result returned by tflite model
         // 2D array with size 1 x MODEL_OUTPUT_SIZE
-        final float[][] predictions = new float[1][labels.length];
-
+        final float[][] predictions = new float[1][labels.size()];
         final ArrayList<LabelProbability> list = new ArrayList<>();
-
         final ArrayList<LabelProbability> topPredictions = new ArrayList<>();
 
         rawBitmap = Bitmap.createScaledBitmap(rawBitmap, 840,840,false);
@@ -67,6 +62,7 @@ public class Predictor {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         rawBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
+        // resize the image to 28 x 28 using Glide
         Glide.with(context)
                 .asBitmap()
                 .load(stream.toByteArray())
@@ -83,25 +79,32 @@ public class Predictor {
 
                         float[] modelInputPixel = new float[pixels.length];
 
-                        // turning white pixels to 1.0
+                        int blackPixelCount = 0;
+
                         for(int i=0; i<pixels.length; i++){
+
+                            // turning white pixels to 1.0
                             modelInputPixel[i] = (float)(0xff&pixels[i])/255;
-                        }
 
-                        // anything other than white is converted to 0 (black)
-                        for(int i=0; i<pixels.length; i++){
-                            if(modelInputPixel[i] != 1.0)
+                            // anything other than white is converted to 0 (black)
+                            if(modelInputPixel[i] != 1.0){
                                 modelInputPixel[i] = 0;
+                                blackPixelCount++; // count black pixels
+                            }
+
                         }
 
-
-                        save("arr = " + Arrays.toString(modelInputPixel) + "\n\n");
+                        // if less than MIN_DRAWN_PIXEL number of pixels are drawn
+                        // then it's pointless to predict something useful from it
+                        if(blackPixelCount < MIN_DRAWN_PIXEL){
+                            return;
+                        }
 
                         // get output from tflite model
                         tflite.run(reshapeToFourDimension(modelInputPixel, 28), predictions);
 
-                        for(int i=0; i<labels.length; i++){
-                            list.add(new LabelProbability(predictions[0][i], labels[i]));
+                        for(int i=0; i<labels.size(); i++){
+                            list.add(new LabelProbability(predictions[0][i], labels.get(i)));
                         }
 
                         // sorting labels according to highest prediction values
@@ -111,9 +114,8 @@ public class Predictor {
                             topPredictions.add(list.get(i));
                         }
 
-
-                        PredictionListener predictionListener = new MainActivity();
-                        predictionListener.Predicted(topPredictions);
+                        Toast.makeText(context,
+                                topPredictions.toString(), Toast.LENGTH_SHORT).show();
 
                     }
 
@@ -125,7 +127,9 @@ public class Predictor {
     }
 
     // well, numpy.reshape is pretty easy, but the below method is just
-    // the implementation for converting a n-dimensional array to 1 x sqrt(n) x sqrt(n) x 1 dimension
+    // the implementation for converting a 1-dimensional array of size n to 1 x sqrt(n) x sqrt(n) x 1 dimensions
+    // why you ask?
+    // well, tensorflow takes a 4D array as input
     private float[][][][] reshapeToFourDimension(float[] arr,int size){
         float[][][][] newArr = new float[1][size][size][1];
         int k=0;
@@ -139,19 +143,18 @@ public class Predictor {
     }
 
     // read the labels from the asset folder
-    private String[] getLabels(String fileName){
+    private ArrayList<String> getLabels(String fileName){
 
         try{
             BufferedReader abc = new BufferedReader(
                     new InputStreamReader(context.getAssets().open(fileName)));
-            List<String> lines = new ArrayList<>();
+            ArrayList<String> lines = new ArrayList<>();
             String line;
             while((line = abc.readLine()) != null) {
                 lines.add(line);
             }
             abc.close();
-            // finally return the string array
-            return lines.toArray(new String[]{});
+            return lines;
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -169,31 +172,7 @@ public class Predictor {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 
-    // write text to file
-    public void save(String text) {
-
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/saved_images");
-        if (!myDir.exists()) {
-            myDir.mkdirs();
-        }
-        String fname = "try.py";
-        File file = new File (myDir, fname);
-        if (file.exists ())
-            file.delete ();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            out.write(text.getBytes());
-            out.flush();
-            out.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public String[] getLabels() {
+    public ArrayList<String> getLabels() {
         return labels;
     }
 }

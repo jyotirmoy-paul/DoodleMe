@@ -59,7 +59,7 @@ rabbit
 radio
 rain
 rainbow
-rollerskates
+roller_skates
 sandwich
 scissors
 sea_turtle
