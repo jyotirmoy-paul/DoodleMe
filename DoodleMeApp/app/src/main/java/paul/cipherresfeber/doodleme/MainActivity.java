@@ -58,8 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         drawingCanvas = findViewById(R.id.drawingCanvas);
-//        drawModel = new DrawModel(metrics.widthPixels, metrics.heightPixels);
-        drawModel = new DrawModel(28, 28);
+        drawModel = new DrawModel(metrics.widthPixels, metrics.heightPixels);
         drawingCanvas.setModel(drawModel);
         drawingCanvas.setOnTouchListener(this);
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             @Override
             public void onClick(View v) {
 
-                int MODEL_IMAGE_INPUT_SIZE = 28;
+                int MODEL_IMAGE_INPUT_SIZE = 280;
 
                 float[] pixelData = drawingCanvas.getPixelData(MODEL_IMAGE_INPUT_SIZE);
 
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
                 Toast.makeText(MainActivity.this,
                         topThreePredictions.toString(), Toast.LENGTH_LONG).show();
 
-                SaveImage(drawingCanvas.getmOffscreenBitmap(MODEL_IMAGE_INPUT_SIZE));
+                SaveImage(drawingCanvas.getmOffscreenBitmap());
 
             }
         });
@@ -157,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 
     private MappedByteBuffer loadModelFile() throws IOException {
-        AssetFileDescriptor fileDescriptor = this.getAssets().openFd("cnn-model.tflite");
+        AssetFileDescriptor fileDescriptor = this.getAssets().openFd("cnn_model.tflite");
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
         FileChannel fileChannel = inputStream.getChannel();
         long startOffset = fileDescriptor.getStartOffset();

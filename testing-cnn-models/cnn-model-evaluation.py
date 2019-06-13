@@ -2,6 +2,7 @@ import sys
 import os
 from keras.models import load_model
 from keras.preprocessing import image
+import numpy as np
 
 label = ''
 for char in open('labels.txt', 'r'):
@@ -24,8 +25,8 @@ else:
         for immg in os.listdir(root_folder + '/' + folder):
             img = image.load_img(root_folder+'/'+folder+'/'+immg, color_mode='grayscale', target_size=(image_input_size, image_input_size))
             img = image.img_to_array(img)
-            img = img.reshape(1, image_input_size, image_input_size, 1);
-            img = img/255
+            img = np.round(img/255)
+            img = img.reshape(1, image_input_size, image_input_size, 1)
             prediction = model.predict_classes(img)
             if prediction == index:
                 temp_correct_call += 1
