@@ -51,8 +51,8 @@ public class DrawingCanvas extends View {
     //create the view, for a given length and width
     private void setup() {
 
-        float width = mModel.getWidth();
-        float height = mModel.getHeight();
+        float width = getWidth();
+        float height = getHeight();
 
         float modelWidth = mModel.getWidth();
         float modelHeight = mModel.getHeight();
@@ -133,41 +133,9 @@ public class DrawingCanvas extends View {
         reset();
     }
 
-    public Bitmap getmOffscreenBitmap(){
-        return Bitmap.createScaledBitmap(mOffscreenBitmap, 280,280,false);
+    public Bitmap getDrawnBitmap(){
+        return mOffscreenBitmap;
     }
 
-    public float[] getPixelData(int size) {
-        if (mOffscreenBitmap == null) {
-            return null;
-        }
-        // scale the drawn bitmap to desired size
-        Bitmap bitmap = Bitmap.createScaledBitmap(mOffscreenBitmap, size, size, false);
-
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        int[] pixels = new int[width * height];
-        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-
-        float[] retPixels = new float[pixels.length];
-        for(int i=0; i<pixels.length; i++){
-            retPixels[i] = ((float)(0xff & pixels[i]))/255;
-        }
-
-/*
-        float[] retPixels = new float[pixels.length];
-        for (int i=0; i<pixels.length; i++) {
-            int pix = pixels[i];
-            int b = pix & 0xff;
-            retPixels[i] = (float)((0xff - b)/255.0);
-        }
-
-        for(int i=0; i<retPixels.length; i++){
-            retPixels[i] = 1 - retPixels[i];
-        }
-*/
-        return retPixels;
-    }
 }
 

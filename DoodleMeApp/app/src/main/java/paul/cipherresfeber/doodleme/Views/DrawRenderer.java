@@ -10,7 +10,7 @@ public class DrawRenderer {
 
         paint.setAntiAlias(true);
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(7f);
+        paint.setStrokeWidth(20f);
         int lineSize = model.getLineSize();
 
         for (int i = startLineIndex; i < lineSize; ++i) {
