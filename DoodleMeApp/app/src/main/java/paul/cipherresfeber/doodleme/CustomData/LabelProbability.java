@@ -14,6 +14,10 @@ public class LabelProbability {
         return probability;
     }
 
+    public String getLabelName(){
+        return labelName;
+    }
+
     @Override
     public String toString() {
         return labelName + ": " + probability;

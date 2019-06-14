@@ -55,7 +55,7 @@ public class Predictor {
     }
 
     // predict method --> returns the top n predictions
-    public void predict(Bitmap rawBitmap, final int numberOfTopPredictions){
+    public void predict(Bitmap rawBitmap, final int numOfPredictions){
 
         isPredictionDone = false;
 
@@ -113,11 +113,11 @@ public class Predictor {
                         // sorting labels on descending order of prediction values
                         Collections.sort(list, new ProbabilitySorter());
 
-                        for(int i=0; i<numberOfTopPredictions; i++){
+                        for(int i=0; i<numOfPredictions; i++){
                             topPredictions.add(list.get(i));
                         }
 
-                        predictionListener.PredictionCallback(topPredictions);
+                        predictionListener.predictionCallback(topPredictions);
 
                     }
 

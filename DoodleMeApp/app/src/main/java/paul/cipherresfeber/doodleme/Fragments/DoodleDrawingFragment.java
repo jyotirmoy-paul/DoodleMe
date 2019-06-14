@@ -3,6 +3,8 @@ package paul.cipherresfeber.doodleme.Fragments;
 import android.annotation.SuppressLint;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,8 +17,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Locale;
+import java.util.Random;
 
 import paul.cipherresfeber.doodleme.CNNModel.PredictionListener;
 import paul.cipherresfeber.doodleme.CNNModel.Predictor;
@@ -28,8 +30,11 @@ import paul.cipherresfeber.doodleme.Views.DrawingCanvas;
 
 public class DoodleDrawingFragment extends Fragment implements View.OnTouchListener, PredictionListener {
 
+    private TextToSpeech speechEngine;
     private String doodleName;
-    private ArrayList<LabelProbability> topPredictions;
+    private boolean stopPredicting;
+    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.30;
+    private final float MIN_THRESHOLD_PROBABILITY_FOR_DETECTION = (float) 0.10;
 
     private DrawingCanvas drawingCanvas;
     private DrawModel drawModel;
@@ -58,7 +63,22 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         predictor = new Predictor(Constants.TFLITE_MODEL_NAME,
                 Constants.MODEL_LABEL_FILE_NAME, getContext(), this);
 
-        
+        // initialize the speech engine
+        speechEngine = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status == TextToSpeech.SUCCESS){
+                    int result = speechEngine.setLanguage(Locale.getDefault());
+                    if(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                        Toast.makeText(getContext(),
+                                "Speech not supported", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        speechEngine.setSpeechRate(0.9f);
+        speechEngine.setPitch(1f);
 
     }
 
@@ -81,23 +101,99 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
             }
         });
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                predictor.predict(drawingCanvas.getBitmap(), 4);
-            }
-        }, 50, 1500 /* run after every 1.5s */);
+        Toast.makeText(getContext(),
+                doodleName, Toast.LENGTH_SHORT).show();
 
         return view;
     }
 
     // after a prediction is made this method is invoked
     @Override
-    public void PredictionCallback(ArrayList<LabelProbability> topPredictions) {
+    public void predictionCallback(ArrayList<LabelProbability> topPredictions) {
 
-        Toast.makeText(getContext(),
-                topPredictions.toString(), Toast.LENGTH_SHORT).show();
+        for(int i=0; i<topPredictions.size(); i++){
+            if(topPredictions.get(i).getLabelName().equals(doodleName) &&
+                    topPredictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY){
+                // then the user has correctly drawn the doodle
+                handleSuccess(doodleName);
+            }
+        }
 
+        handleFailure(topPredictions);
+
+    }
+
+    // if the doodle is correctly drawn, this method is invoked
+    private void handleSuccess(String doodleName){
+        stopPredicting = true; // the model won't predict anything now
+
+        String[] precedingSpeech = {
+                "Oh I know! It's ",
+                "Gotcha, it's ",
+                "I got it. It's a nice ",
+                "I got it, it's "
+        };
+
+        String finalSpeech = precedingSpeech[new Random().nextInt(precedingSpeech.length)] +
+                join(doodleName.split("_"), " ");
+
+        speechEngine.speak(
+                finalSpeech,
+                TextToSpeech.QUEUE_FLUSH, null);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_top)
+                        .remove(DoodleDrawingFragment.this).commit();
+            }
+        }, 2000); // wait for 2 second before quiting
+
+    }
+
+    // if the drawn doodle is not correct, this method is invoked
+    private void handleFailure(ArrayList<LabelProbability> predictions){
+
+        String[] precedingSpeech = {
+                "Well, I see ",
+                "I can see ",
+                "I guess it's "
+        };
+
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i<predictions.size(); i++){
+            if(predictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY_FOR_DETECTION){
+                builder.append(join(predictions.get(i).getLabelName().split("_"), " "))
+                        .append(", or ");
+            }
+        }
+
+        if(!predictions.isEmpty()){
+            speechEngine.speak(precedingSpeech[new Random().nextInt(precedingSpeech.length)] +
+                    builder.subSequence(0,builder.length()-5).toString(), TextToSpeech.QUEUE_ADD, null);
+        } else{
+
+            String[] couldNotGuessDrawingSpeech = {
+                    "I have no idea what you are drawing!",
+                    "What is this? No clue!",
+                    "Well I am paranoid by your drawing!"
+            };
+
+            speechEngine.speak(couldNotGuessDrawingSpeech[new Random().nextInt(couldNotGuessDrawingSpeech.length)],
+                    TextToSpeech.QUEUE_FLUSH, null);
+        }
+
+    }
+
+    public static String join(String[] arr, String separator) {
+        StringBuilder sbStr = new StringBuilder();
+        for (int i = 0, il = arr.length; i < il; i++) {
+            if (i > 0)
+                sbStr.append(separator);
+            sbStr.append(arr[i]);
+        }
+        return sbStr.toString();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -156,6 +252,10 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
     private void processTouchUp() {
         drawModel.endLine();
+
+        // try to predict drawing after the user has lifted his/her finger
+        if(!stopPredicting)
+            predictor.predict(drawingCanvas.getBitmap(), 5 /* get the top 5 predictions*/ );
     }
 
     @Override
