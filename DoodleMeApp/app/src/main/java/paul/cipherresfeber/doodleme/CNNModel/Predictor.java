@@ -37,7 +37,7 @@ public class Predictor {
     private boolean isPredictionDone;
     private ArrayList<LabelProbability> topPredictions;
 
-    private final int MIN_DRAWN_PIXEL = 30;
+    private final int MIN_DRAWN_PIXEL = 35;
 
     // CONSTRUCTOR
     // initialize the model here

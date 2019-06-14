@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
+    android:background="#d5d5d5"
     android:gravity="center"
     android:focusable="true"
     android:clickable="true"
-    android:background="#f5f5f5"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="150dp">
@@ -23,9 +24,19 @@
     </LinearLayout>
 
     <paul.cipherresfeber.doodleme.Views.DrawingCanvas
-        android:layout_weight="1"
+        android:layout_below="@id/linearLayout"
         android:id="@+id/drawingCanvas"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="match_parent" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/txvPredictions"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
