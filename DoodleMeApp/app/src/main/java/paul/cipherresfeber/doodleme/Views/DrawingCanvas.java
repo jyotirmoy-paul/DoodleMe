@@ -133,7 +133,7 @@ public class DrawingCanvas extends View {
         reset();
     }
 
-    public Bitmap getDrawnBitmap(){
+    public Bitmap getBitmap(){
         return mOffscreenBitmap;
     }
 

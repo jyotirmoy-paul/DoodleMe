@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:gravity="center"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="#f5f5f5"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <Button
+            android:text="CLEAR"
+            android:id="@+id/btnClearDrawingCanvas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <paul.cipherresfeber.doodleme.Views.DrawingCanvas
+        android:layout_weight="1"
+        android:id="@+id/drawingCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+</LinearLayout>

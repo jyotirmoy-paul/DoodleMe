@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -29,15 +28,22 @@ import paul.cipherresfeber.doodleme.Utility.ProbabilitySorter;
 
 public class Predictor {
 
+    private PredictionListener predictionListener;
+
     private Context context;
     private ArrayList<String> labels;
     private Interpreter tflite;
 
+    private boolean isPredictionDone;
+    private ArrayList<LabelProbability> topPredictions;
+
     private final int MIN_DRAWN_PIXEL = 30;
 
+    // CONSTRUCTOR
     // initialize the model here
-    public Predictor(String tensorflowLiteModelName, String labelFileName,Context context){
+    public Predictor(String tensorflowLiteModelName, String labelFileName,Context context, PredictionListener predictionListener){
         this.context = context;
+        this.predictionListener = predictionListener;
         // load the tflite model
         try{
             tflite = new Interpreter(loadModel(tensorflowLiteModelName));
@@ -45,17 +51,19 @@ public class Predictor {
             e.printStackTrace();
         }
         // read the labels
-        labels = getLabels(labelFileName);
+        labels = readLabels(labelFileName);
     }
 
     // predict method --> returns the top n predictions
     public void predict(Bitmap rawBitmap, final int numberOfTopPredictions){
 
+        isPredictionDone = false;
+
         // array for storing result returned by tflite model
         // 2D array with size 1 x MODEL_OUTPUT_SIZE
         final float[][] predictions = new float[1][labels.size()];
         final ArrayList<LabelProbability> list = new ArrayList<>();
-        final ArrayList<LabelProbability> topPredictions = new ArrayList<>();
+        topPredictions = new ArrayList<>();
 
         rawBitmap = Bitmap.createScaledBitmap(rawBitmap, 840,840,false);
 
@@ -78,20 +86,15 @@ public class Predictor {
                         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
                         float[] modelInputPixel = new float[pixels.length];
-
                         int blackPixelCount = 0;
-
                         for(int i=0; i<pixels.length; i++){
-
                             // turning white pixels to 1.0
                             modelInputPixel[i] = (float)(0xff&pixels[i])/255;
-
                             // anything other than white is converted to 0 (black)
                             if(modelInputPixel[i] != 1.0){
                                 modelInputPixel[i] = 0;
                                 blackPixelCount++; // count black pixels
                             }
-
                         }
 
                         // if less than MIN_DRAWN_PIXEL number of pixels are drawn
@@ -107,15 +110,14 @@ public class Predictor {
                             list.add(new LabelProbability(predictions[0][i], labels.get(i)));
                         }
 
-                        // sorting labels according to highest prediction values
+                        // sorting labels on descending order of prediction values
                         Collections.sort(list, new ProbabilitySorter());
 
                         for(int i=0; i<numberOfTopPredictions; i++){
                             topPredictions.add(list.get(i));
                         }
 
-                        Toast.makeText(context,
-                                topPredictions.toString(), Toast.LENGTH_SHORT).show();
+                        predictionListener.PredictionCallback(topPredictions);
 
                     }
 
@@ -143,7 +145,7 @@ public class Predictor {
     }
 
     // read the labels from the asset folder
-    private ArrayList<String> getLabels(String fileName){
+    private ArrayList<String> readLabels(String fileName){
 
         try{
             BufferedReader abc = new BufferedReader(
@@ -174,5 +176,13 @@ public class Predictor {
 
     public ArrayList<String> getLabels() {
         return labels;
+    }
+
+    public boolean isPredictionDone(){
+        return isPredictionDone;
+    }
+
+    public ArrayList<LabelProbability> getTopPredictions(){
+        return topPredictions;
     }
 }
