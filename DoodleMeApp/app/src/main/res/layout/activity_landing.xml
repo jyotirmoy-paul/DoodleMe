@@ -1,13 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    android:background="#fff"
-    android:clickable="true"
-    android:focusable="true"
+<ScrollView
+    android:scrollbars="none"
+    android:fillViewport="true"
+    tools:context=".LandingActivity"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".LandingActivity">
+    android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="#fff"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:layout_weight="0.5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+            <ImageView
+                android:src="@drawable/blobs"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+
+            <View
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+            <TextView
+                android:textStyle="bold|italic"
+                android:textColor="@color/colorPrimary"
+                android:textSize="30sp"
+                android:gravity="center"
+                android:text="&quot;DOODLE ME&quot;"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+            <Button
+                android:id="@+id/btnPlay"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimary"
+                android:text="Play"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/bordered_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnAboutProject"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimary"
+                android:text="About Project"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bordered_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnGithub"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimary"
+                android:text="View Project on Github"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bordered_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_weight="0.5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

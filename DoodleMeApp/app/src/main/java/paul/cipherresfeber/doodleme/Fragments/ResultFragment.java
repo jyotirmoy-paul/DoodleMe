@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import paul.cipherresfeber.doodleme.Adapters.ResultAdapter;
 import paul.cipherresfeber.doodleme.CustomData.ResultData;
+import paul.cipherresfeber.doodleme.LandingActivity;
 import paul.cipherresfeber.doodleme.MainActivity;
 import paul.cipherresfeber.doodleme.R;
 import paul.cipherresfeber.doodleme.Utility.Constants;
@@ -66,7 +67,13 @@ public class ResultFragment extends Fragment {
                 getActivity().finish();
             }
         });
-        builder.setNegativeButton("Nopes", null);
+        builder.setNegativeButton("Main Menu", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(getContext(), LandingActivity.class));
+                getActivity().finish();
+            }
+        });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

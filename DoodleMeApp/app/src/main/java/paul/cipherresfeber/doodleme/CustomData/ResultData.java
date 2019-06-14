@@ -19,7 +19,7 @@ public class ResultData implements Serializable {
         return doodleName;
     }
 
-    public String isCouldGuess() {
+    public String getCouldGuess() {
         return couldGuess;
     }
 

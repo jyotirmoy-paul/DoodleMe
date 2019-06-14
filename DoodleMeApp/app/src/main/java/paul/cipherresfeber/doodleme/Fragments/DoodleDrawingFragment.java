@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,11 +33,10 @@ import paul.cipherresfeber.doodleme.Views.DrawingCanvas;
 
 public class DoodleDrawingFragment extends Fragment implements View.OnTouchListener, PredictionListener {
 
-    // todo: use this interface to return results
     private DoodleDrawingKeeper doodleDrawingKeeper;
 
-    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.15;
-    private final int NUMBER_OF_TOP_PREDICTIONS = 5;
+    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.30;
+    private final int NUMBER_OF_TOP_PREDICTIONS = 3;
 
     private TextToSpeech speechEngine;
     private String doodleName;
@@ -54,6 +53,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
     private TextView textViewPredictions;
     private TextView textViewCountDownTimer;
+    private TextView textViewDoodleName;
 
     private CountDownTimer countDownTimer;
 
@@ -113,8 +113,8 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         initializeCanvas(view);
 
         // the button to clear out the canvas
-        Button buttonClearDrawingCanvas = view.findViewById(R.id.btnClearDrawingCanvas);
-        buttonClearDrawingCanvas.setOnClickListener(new View.OnClickListener() {
+        ImageView imageViewClearCanvas = view.findViewById(R.id.imvClear);
+        imageViewClearCanvas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawModel.clear();
@@ -124,8 +124,8 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
             }
         });
 
-        Button buttonCloseCanvas = view.findViewById(R.id.btnCloseCanvas);
-        buttonCloseCanvas.setOnClickListener(new View.OnClickListener() {
+        ImageView imageViewClose = view.findViewById(R.id.imvClose);
+        imageViewClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -151,6 +151,9 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
             @Override
             public void onFinish() {
 
+                stopPredicting = true; // no further predictions will be made
+                speechEngine.speak("Sorry! I couldn't guess that!", TextToSpeech.QUEUE_FLUSH, null);
+
                 // well if time has run up --- the user could not have drawn the correct doodle
                 doodleDrawingKeeper.keepResult(doodleName, false, drawingCanvas.getBitmap());
                 getActivity().getSupportFragmentManager().beginTransaction()
@@ -159,6 +162,9 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
             }
         }.start();
+
+        textViewDoodleName = view.findViewById(R.id.txvDoodleName);
+        textViewDoodleName.setText(doodleName);
 
         return view;
     }
@@ -170,11 +176,9 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         boolean success = false;
 
         for(int i=0; i<topPredictions.size(); i++){
-/*
-            Toast.makeText(getContext(),
-                    topPredictions.get(i).getLabelName() + " - " + doodleName, Toast.LENGTH_SHORT).show();
-*/
-            if(topPredictions.get(i).getLabelName().equals(doodleName)){
+
+            if(topPredictions.get(i).getLabelName().equals(doodleName) &&
+                    topPredictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY){
                 // then the user has correctly drawn the doodle
                 countDownTimer.cancel();
                 success = true;
@@ -197,12 +201,10 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
                 "Oh I know! It's ",
                 "Oh I know! It's ",
                 "Gotcha, it's ",
-                "I got it. It's a cute ",
                 "I got it, it's "
         };
 
-        String finalSpeech = precedingSpeech[random.nextInt(precedingSpeech.length)] +
-                join(doodleName.split("_"), " ");
+        String finalSpeech = precedingSpeech[random.nextInt(precedingSpeech.length)] + doodleName;
 
         speechEngine.speak(
                 finalSpeech,
@@ -235,8 +237,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         StringBuilder builder = new StringBuilder();
         for(int i=0; i<predictions.size(); i++){
             if(predictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY){
-                builder.append(join(predictions.get(i).getLabelName().split("_"), " "))
-                        .append(", or ");
+                builder.append(predictions.get(i).getLabelName()).append(", or ");
             }
         }
 
@@ -262,16 +263,6 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
                     TextToSpeech.QUEUE_FLUSH, null);
         }
 
-    }
-
-    public static String join(String[] arr, String separator) {
-        StringBuilder sbStr = new StringBuilder();
-        for (int i = 0, il = arr.length; i < il; i++) {
-            if (i > 0)
-                sbStr.append(separator);
-            sbStr.append(arr[i]);
-        }
-        return sbStr.toString();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -349,7 +340,6 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         drawingCanvas.onPause();
     }
 
-    // todo: do something else here
     public void onBackPressed(){
         Toast.makeText(getContext(),
                 "Please use the close button", Toast.LENGTH_SHORT).show();

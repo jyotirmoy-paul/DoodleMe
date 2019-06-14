@@ -25,6 +25,8 @@ import paul.cipherresfeber.doodleme.Utility.DoodleDrawingKeeper;
 
 public class MainActivity extends AppCompatActivity implements DoodleDrawingKeeper {
 
+    private final int TOTAL_NUMBER_OF_TASKS = 5;
+
     TextView textViewDoodleName;
 
     private ArrayList<String> questions;
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements DoodleDrawingKeep
     private String doodleName;
 
     private DoodleDrawingFragment fragment;
-    private ResultFragment f;
+    private ResultFragment resultFragment;
 
     @SuppressLint("ResourceType")
     @Override
@@ -44,11 +46,11 @@ public class MainActivity extends AppCompatActivity implements DoodleDrawingKeep
 
         resultData = new ArrayList<>();
 
-        // randomly choose 5 samples
+        // randomly choose TOTAL_NUMBER_OF_TASKS samples
         ArrayList<String> labels = getLabels(Constants.MODEL_LABEL_FILE_NAME);
         Collections.shuffle(labels); // shuffle the list
         questions = new ArrayList<>();
-        for(int i=0; i<5; i++)
+        for(int i=0; i<TOTAL_NUMBER_OF_TASKS; i++)
             questions.add(labels.get(i));
 
 
@@ -93,12 +95,12 @@ public class MainActivity extends AppCompatActivity implements DoodleDrawingKeep
         } else{
             textViewDoodleName.setText("");
             // the game is finished, open result fragment
-            f = ResultFragment.newInstance(resultData);
+            resultFragment = ResultFragment.newInstance(resultData);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_top,
                     R.anim.enter_from_top, R.anim.exit_to_top);
             transaction.addToBackStack(null);
-            transaction.add(R.id.fragmentContainer, f, "ResultFragment").commit();
+            transaction.add(R.id.fragmentContainer, resultFragment, "ResultFragment").commit();
         }
 
     }
@@ -133,13 +135,24 @@ public class MainActivity extends AppCompatActivity implements DoodleDrawingKeep
 
     @Override
     public void onBackPressed() {
-        if(fragment.isVisible())
+        if(fragment != null && fragment.isVisible())
             fragment.onBackPressed();
-        else if(f.isVisible())
-            f.onBackPressed();
+        else if(resultFragment != null && resultFragment.isVisible())
+            resultFragment.onBackPressed();
         else {
             startActivity(new Intent(MainActivity.this, LandingActivity.class));
             MainActivity.this.finish();
         }
     }
+
+    public static String join(String[] arr, String separator) {
+        StringBuilder sbStr = new StringBuilder();
+        for (int i = 0, il = arr.length; i < il; i++) {
+            if (i > 0)
+                sbStr.append(separator);
+            sbStr.append(arr[i]);
+        }
+        return sbStr.toString();
+    }
+
 }

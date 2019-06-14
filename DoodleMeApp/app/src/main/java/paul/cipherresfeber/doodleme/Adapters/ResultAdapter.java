@@ -43,6 +43,12 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
         resultViewHolder.imageViewDoodle.setImageBitmap(stringToBitmap(resultData.getUserDrawing()));
         resultViewHolder.textViewDoodleName.setText(resultData.getDoodleName());
 
+        String doodlePrediction = resultData.getCouldGuess();
+        if(doodlePrediction.equals(String.valueOf(true))){
+            resultViewHolder.imageViewDoodlePredictionStatus.setImageResource(R.drawable.ic_correct);
+        } else{
+            resultViewHolder.imageViewDoodlePredictionStatus.setImageResource(R.drawable.ic_wrong);
+        }
 
     }
 
@@ -55,6 +61,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
 
         TextView textViewDoodleName;
         ImageView imageViewDoodle;
+        ImageView imageViewDoodlePredictionStatus;
 
 
         public ResultViewHolder(@NonNull View itemView) {
@@ -62,6 +69,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
 
             textViewDoodleName = itemView.findViewById(R.id.txvDoodleName);
             imageViewDoodle = itemView.findViewById(R.id.imvDoodle);
+            imageViewDoodlePredictionStatus = itemView.findViewById(R.id.imvDoodlePredictionStatus);
 
         }
     }
