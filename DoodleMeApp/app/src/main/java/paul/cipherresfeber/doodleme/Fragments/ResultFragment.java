@@ -1,20 +1,21 @@
 package paul.cipherresfeber.doodleme.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import paul.cipherresfeber.doodleme.Adapters.ResultAdapter;
 import paul.cipherresfeber.doodleme.CustomData.ResultData;
 import paul.cipherresfeber.doodleme.MainActivity;
 import paul.cipherresfeber.doodleme.R;
@@ -45,26 +46,29 @@ public class ResultFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_result, container, false);
 
-        TextView textViewResultData = view.findViewById(R.id.txvResult);
-        textViewResultData.setText(resultData.toString());
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+
+        ResultAdapter resultAdapter = new ResultAdapter(getContext(), resultData);
+        recyclerView.setAdapter(resultAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return view;
     }
 
     public void onBackPressed(){
-        startActivity(new Intent(getContext(), MainActivity.class));
-        getActivity().finish();
-    }
-
-    public Bitmap StringToBitMap(String encodedString){
-        try {
-            byte [] encodeByte= Base64.decode(encodedString,Base64.DEFAULT);
-            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch(Exception e) {
-            e.getMessage();
-            return null;
-        }
+        // ask for user confirmation
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Play Again?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(getContext(), MainActivity.class));
+                getActivity().finish();
+            }
+        });
+        builder.setNegativeButton("Nopes", null);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
 }
