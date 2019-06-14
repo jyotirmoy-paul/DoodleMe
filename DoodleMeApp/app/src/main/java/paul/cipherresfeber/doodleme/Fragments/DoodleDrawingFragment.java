@@ -3,6 +3,7 @@ package paul.cipherresfeber.doodleme.Fragments;
 import android.annotation.SuppressLint;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
@@ -35,7 +36,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
     // todo: use this interface to return results
     private DoodleDrawingKeeper doodleDrawingKeeper;
 
-    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.20;
+    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.15;
     private final int NUMBER_OF_TOP_PREDICTIONS = 5;
 
     private TextToSpeech speechEngine;
@@ -52,6 +53,9 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
     private Random random;
 
     private TextView textViewPredictions;
+    private TextView textViewCountDownTimer;
+
+    private CountDownTimer countDownTimer;
 
     public static DoodleDrawingFragment newInstance(String doodleName, DoodleDrawingKeeper doodleDrawingKeeper) {
         DoodleDrawingFragment fragment = new DoodleDrawingFragment();
@@ -120,6 +124,42 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
             }
         });
 
+        Button buttonCloseCanvas = view.findViewById(R.id.btnCloseCanvas);
+        buttonCloseCanvas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // well if user is quitting -- he could not draw the doodle
+                doodleDrawingKeeper.keepResult(doodleName, false, drawingCanvas.getBitmap());
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_top)
+                        .remove(DoodleDrawingFragment.this).commit();
+                countDownTimer.cancel();
+
+            }
+        });
+
+        textViewCountDownTimer = view.findViewById(R.id.txvCountDownTimer);
+
+        // start a count down timer to maintain time during gameplay
+        countDownTimer = new CountDownTimer(1000*10 /* 10s */ + 500 /* bonus time */,1000 /* 1s */){
+            @Override
+            public void onTick(long millisUntilFinished) {
+                textViewCountDownTimer.setText(String.valueOf(millisUntilFinished/1000 /* seconds until finished */));
+            }
+
+            @Override
+            public void onFinish() {
+
+                // well if time has run up --- the user could not have drawn the correct doodle
+                doodleDrawingKeeper.keepResult(doodleName, false, drawingCanvas.getBitmap());
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_top)
+                        .remove(DoodleDrawingFragment.this).commit();
+
+            }
+        }.start();
+
         return view;
     }
 
@@ -130,22 +170,26 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         boolean success = false;
 
         for(int i=0; i<topPredictions.size(); i++){
-            if(topPredictions.get(i).getLabelName().equals(doodleName) &&
-                    topPredictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY){
+/*
+            Toast.makeText(getContext(),
+                    topPredictions.get(i).getLabelName() + " - " + doodleName, Toast.LENGTH_SHORT).show();
+*/
+            if(topPredictions.get(i).getLabelName().equals(doodleName)){
                 // then the user has correctly drawn the doodle
-                handleSuccess(doodleName);
+                countDownTimer.cancel();
                 success = true;
+                handleSuccess(doodleName);
                 break;
             }
         }
 
-        if(!success)
+        if(!success && !stopPredicting)
             handleFailure(topPredictions);
 
     }
 
     // if the doodle is correctly drawn, this method is invoked
-    private void handleSuccess(String doodleName){
+    private void handleSuccess(final String doodleName){
         stopPredicting = true; // the model won't predict anything now
 
         String[] precedingSpeech = {
@@ -153,7 +197,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
                 "Oh I know! It's ",
                 "Oh I know! It's ",
                 "Gotcha, it's ",
-                "I got it. It's a nice ",
+                "I got it. It's a cute ",
                 "I got it, it's "
         };
 
@@ -169,6 +213,8 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                // user successfully guessed the doodle
+                doodleDrawingKeeper.keepResult(doodleName, true, drawingCanvas.getBitmap());
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_top)
                         .remove(DoodleDrawingFragment.this).commit();
@@ -306,7 +352,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
     // todo: do something else here
     public void onBackPressed(){
         Toast.makeText(getContext(),
-                "NOT POSSIBLE", Toast.LENGTH_SHORT).show();
+                "Please use the close button", Toast.LENGTH_SHORT).show();
     }
 
 }

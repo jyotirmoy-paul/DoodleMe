@@ -10,14 +10,30 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/linearLayout"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="150dp">
 
+        <TextView
+            android:id="@+id/txvCountDownTimer"
+            android:textSize="20sp"
+            android:textColor="#000"
+            android:textStyle="bold"
+            android:text="00:00"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <Button
             android:text="CLEAR"
             android:id="@+id/btnClearDrawingCanvas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:text="Close Canvas"
+            android:id="@+id/btnCloseCanvas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

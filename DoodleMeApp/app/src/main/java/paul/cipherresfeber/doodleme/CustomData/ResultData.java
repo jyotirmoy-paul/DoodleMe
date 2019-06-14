@@ -1,16 +1,15 @@
 package paul.cipherresfeber.doodleme.CustomData;
 
-import android.graphics.Bitmap;
-
 import java.io.Serializable;
+
 
 public class ResultData implements Serializable {
 
     String doodleName;
-    boolean couldGuess;
-    Bitmap userDrawing;
+    String couldGuess;
+    String userDrawing;
 
-    public ResultData(String doodleName, boolean couldGuess, Bitmap userDrawing) {
+    public ResultData(String doodleName, String couldGuess, String userDrawing) {
         this.doodleName = doodleName;
         this.couldGuess = couldGuess;
         this.userDrawing = userDrawing;
@@ -20,12 +19,17 @@ public class ResultData implements Serializable {
         return doodleName;
     }
 
-    public boolean isCouldGuess() {
+    public String isCouldGuess() {
         return couldGuess;
     }
 
-    public Bitmap getUserDrawing() {
+    public String getUserDrawing() {
         return userDrawing;
+    }
+
+    @Override
+    public String toString() {
+        return doodleName + ": " + couldGuess;
     }
 
 }
