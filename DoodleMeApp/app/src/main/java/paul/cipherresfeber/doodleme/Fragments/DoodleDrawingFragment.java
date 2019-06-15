@@ -35,8 +35,10 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
     private DoodleDrawingKeeper doodleDrawingKeeper;
 
-    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.30;
-    private final int NUMBER_OF_TOP_PREDICTIONS = 3;
+    private final float MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION = (float) 0.50;
+    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.10;
+    private final int NUMBER_OF_TOP_PREDICTIONS = 6;
+    private final int TIME_PER_DOODLE_DRAWING = 15; /* in seconds */
 
     private TextToSpeech speechEngine;
     private String doodleName;
@@ -141,8 +143,8 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
         textViewCountDownTimer = view.findViewById(R.id.txvCountDownTimer);
 
-        // start a count down timer to maintain time during gameplay
-        countDownTimer = new CountDownTimer(1000*10 /* 10s */ + 500 /* bonus time */,1000 /* 1s */){
+        // start a count down timer to maintain time during game play
+        countDownTimer = new CountDownTimer(1000*TIME_PER_DOODLE_DRAWING + 500 /* bonus time */,1000 /* 1s */){
             @Override
             public void onTick(long millisUntilFinished) {
                 textViewCountDownTimer.setText(String.valueOf(millisUntilFinished/1000 /* seconds until finished */));
@@ -175,16 +177,13 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
         boolean success = false;
 
-        for(int i=0; i<topPredictions.size(); i++){
-
-            if(topPredictions.get(i).getLabelName().equals(doodleName) &&
-                    topPredictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY){
-                // then the user has correctly drawn the doodle
-                countDownTimer.cancel();
-                success = true;
-                handleSuccess(doodleName);
-                break;
-            }
+        // only if the said doodle shows up in the top position with probability more than
+        // MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION then consider it a correct drawing
+        if(topPredictions.get(0).getLabelName().equals(doodleName) &&
+                topPredictions.get(0).getProbability() >= MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION){
+            countDownTimer.cancel();
+            success = true;
+            handleSuccess(doodleName);
         }
 
         if(!success && !stopPredicting)
@@ -231,19 +230,20 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
         String[] precedingSpeech = {
                 "Well, I see ",
                 "I can see ",
-                "I guess it's "
+                "I guess it's ",
+                "I see "
         };
 
         StringBuilder builder = new StringBuilder();
         for(int i=0; i<predictions.size(); i++){
-            if(predictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY){
+            if(!predictions.get(i).getLabelName().equals(doodleName) && predictions.get(i).getProbability() > MIN_THRESHOLD_PROBABILITY){
                 builder.append(predictions.get(i).getLabelName()).append(", or ");
             }
         }
 
         if(!builder.toString().isEmpty()){
             String finalSpeech = precedingSpeech[random.nextInt(precedingSpeech.length)] +
-                    builder.substring(0,builder.length()-5);
+                    builder.substring(0, builder.length()-5);
 
             textViewPredictions.setText(finalSpeech);
             speechEngine.speak(finalSpeech, TextToSpeech.QUEUE_FLUSH, null);

@@ -42,11 +42,20 @@
                 android:layout_height="0dp"/>
 
             <TextView
-                android:textStyle="bold|italic"
+                android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 android:textSize="30sp"
                 android:gravity="center"
-                android:text="&quot;DOODLE ME&quot;"
+                android:text="DOODLE ME"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textStyle="italic"
+                android:textColor="@color/colorPrimary"
+                android:textSize="17sp"
+                android:gravity="center"
+                android:text="&quot;Play Pictionary with a Machine&quot;"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -56,41 +65,41 @@
                 android:layout_height="0dp"/>
 
             <Button
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
                 android:id="@+id/btnPlay"
                 android:textAllCaps="false"
                 android:textSize="20sp"
                 android:textColor="@color/colorPrimary"
                 android:text="Play"
-                android:layout_marginEnd="30dp"
-                android:layout_marginStart="30dp"
                 android:background="@drawable/bordered_background"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <Button
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
                 android:id="@+id/btnAboutProject"
                 android:textAllCaps="false"
                 android:textSize="20sp"
                 android:textColor="@color/colorPrimary"
                 android:text="About Project"
-                android:layout_marginEnd="30dp"
-                android:layout_marginStart="30dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/bordered_background"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <Button
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
                 android:id="@+id/btnGithub"
                 android:textAllCaps="false"
                 android:textSize="20sp"
                 android:textColor="@color/colorPrimary"
                 android:text="View Project on Github"
-                android:layout_marginEnd="30dp"
-                android:layout_marginStart="30dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/bordered_background"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <View
