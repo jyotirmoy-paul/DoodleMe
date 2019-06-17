@@ -30,7 +30,7 @@ $ pip3 install matplotlib
 ```shell
 $ sudo apt-get install jupyter
 ```
-> For correctly setting up the android studio project, refer [README.md]()
+> For correctly setting up the android studio project, refer [README.md](https://github.com/jyotirmoy-paul/DoodleMe/blob/master/DoodleMeApp/README.md)
 
 ## Features
 - Neural Network based on CNN architecture
