@@ -36,7 +36,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
     private DoodleDrawingKeeper doodleDrawingKeeper;
 
     private final int MILLIS_BETWEEN_PREDICTIONS = 800;
-    private final float MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION = (float) 0.40;
+    private final float MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION = (float) 0.50;
     private final float MIN_THRESHOLD_PROBABILITY = (float) 0.10;
     private final int NUMBER_OF_TOP_PREDICTIONS = 4;
     private final int TIME_PER_DOODLE_DRAWING = 20; /* in seconds */

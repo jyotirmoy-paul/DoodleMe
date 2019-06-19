@@ -21,7 +21,7 @@ public class LandingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                final String[] numberOfTasks = { "3", "5", "7", "11", "13", "17", "19" };
+                final String[] numberOfTasks = { "3", "5", "7", "11", "13", "17", "19", "23", "29" };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(LandingActivity.this);
                 builder.setTitle("Play with how many doodles?");

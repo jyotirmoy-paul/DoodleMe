@@ -8,7 +8,7 @@ from random import sample
 import os
 import sys
 
-dir__ = 'raw-dataset'
+dir__ = '/media/mr_paul/ubuntu-files/deep-learning-datasets/doodle-dataset'
 __dir = 'dataset'
 n = 1000
 

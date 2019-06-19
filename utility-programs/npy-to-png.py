@@ -8,7 +8,7 @@ from random import sample
 import os
 import sys
 
-dir__ = 'raw-dataset'
+dir__ = 'dataset-6000'
 __dir = 'dataset'
 n = 1000
 
