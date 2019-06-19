@@ -7,5 +7,6 @@ public class Constants {
     public static final String MODEL_LABEL_FILE_NAME = "labels.txt";
     public static final String DOODLE_RESULT_KEEPER_INTERFACE = "interface_result_keeper";
     public static final String RESULT_DATA = "result_data";
+    public static final String TOTAL_NUMBER_OF_TASKS = "total_tasks";
 
 }

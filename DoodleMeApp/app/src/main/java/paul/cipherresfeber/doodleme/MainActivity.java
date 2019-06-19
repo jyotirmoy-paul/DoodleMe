@@ -25,8 +25,7 @@ import paul.cipherresfeber.doodleme.Utility.DoodleDrawingKeeper;
 
 public class MainActivity extends AppCompatActivity implements DoodleDrawingKeeper {
 
-    private final int TOTAL_NUMBER_OF_TASKS = 5;
-
+    TextView textViewCounter;
     TextView textViewDoodleName;
 
     private ArrayList<String> questions;
@@ -44,21 +43,26 @@ public class MainActivity extends AppCompatActivity implements DoodleDrawingKeep
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // get the number of tasks passed down
+        int totalNumberOfTasks = getIntent().getIntExtra(Constants.TOTAL_NUMBER_OF_TASKS, 5);
+
         resultData = new ArrayList<>();
 
         // randomly choose TOTAL_NUMBER_OF_TASKS samples
         ArrayList<String> labels = getLabels(Constants.MODEL_LABEL_FILE_NAME);
-        Collections.shuffle(labels); // shuffle the list
+        Collections.shuffle(labels); // shuffle the list then pick desired number of categories
         questions = new ArrayList<>();
-        for(int i=0; i<TOTAL_NUMBER_OF_TASKS; i++)
+        for(int i = 0; i< totalNumberOfTasks; i++)
             questions.add(labels.get(i));
-
 
         // show the first doodle name
         textViewDoodleName = findViewById(R.id.txvDoodleName);
         questionNumber = 0;
         doodleName = questions.get(questionNumber);
         textViewDoodleName.setText(doodleName);
+
+        textViewCounter = findViewById(R.id.txvCounter);
+        textViewCounter.setText((questionNumber+1) + " / " + questions.size());
 
 
         Button buttonStart = findViewById(R.id.btnStart);
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements DoodleDrawingKeep
         resultData.add(new ResultData(doodleName, String.valueOf(couldGuess), bitmapToString(userDrawing)));
 
         questionNumber++; // increment the questionNumber by 1
+        textViewCounter.setText((questionNumber+1) + " / " + questions.size());
 
         if(questionNumber < questions.size()){
             // if more questions are left, fetch the new one

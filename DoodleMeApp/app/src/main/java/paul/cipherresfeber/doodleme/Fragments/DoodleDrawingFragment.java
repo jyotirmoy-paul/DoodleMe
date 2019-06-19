@@ -35,10 +35,11 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
     private DoodleDrawingKeeper doodleDrawingKeeper;
 
-    private final float MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION = (float) 0.50;
+    private final int MILLIS_BETWEEN_PREDICTIONS = 800;
+    private final float MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION = (float) 0.40;
     private final float MIN_THRESHOLD_PROBABILITY = (float) 0.10;
-    private final int NUMBER_OF_TOP_PREDICTIONS = 6;
-    private final int TIME_PER_DOODLE_DRAWING = 15; /* in seconds */
+    private final int NUMBER_OF_TOP_PREDICTIONS = 4;
+    private final int TIME_PER_DOODLE_DRAWING = 20; /* in seconds */
 
     private TextToSpeech speechEngine;
     private String doodleName;
@@ -52,6 +53,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
     private Predictor predictor;
     private Random random;
+    private long nextPredictionTime = 0;
 
     private TextView textViewPredictions;
     private TextView textViewCountDownTimer;
@@ -253,7 +255,7 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
             String[] couldNotGuessDrawingSpeech = {
                     "I have no idea what you are drawing!",
                     "What is this? No clue!",
-                    "Well I am paranoid by your drawing!"
+                    "I am paranoid by your drawing!"
             };
 
             String finalSpeech = couldNotGuessDrawingSpeech[random.nextInt(couldNotGuessDrawingSpeech.length)];
@@ -322,10 +324,15 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
     private void processTouchUp() {
         drawModel.endLine();
 
-        // try to predict drawing after the user has lifted his/her finger
+        long currentTime = System.currentTimeMillis();
+
         if(!stopPredicting)
-            predictor.predict(drawingCanvas.getBitmap(),
-                    NUMBER_OF_TOP_PREDICTIONS /* number of top predictions to fetch*/ );
+            if(currentTime > nextPredictionTime){
+                // this allows the prediction to happen only after a certain time period
+                nextPredictionTime = currentTime + MILLIS_BETWEEN_PREDICTIONS;
+                predictor.predict(drawingCanvas.getBitmap(),
+                        NUMBER_OF_TOP_PREDICTIONS /* number of top predictions to fetch*/ );
+            }
     }
 
     @Override
@@ -341,8 +348,12 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
     }
 
     public void onBackPressed(){
-        Toast.makeText(getContext(),
-                "Please use the close button", Toast.LENGTH_SHORT).show();
+        // well if user is quitting -- he could not draw the doodle
+        doodleDrawingKeeper.keepResult(doodleName, false, drawingCanvas.getBitmap());
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_top)
+                .remove(DoodleDrawingFragment.this).commit();
+        countDownTimer.cancel();
     }
 
 }

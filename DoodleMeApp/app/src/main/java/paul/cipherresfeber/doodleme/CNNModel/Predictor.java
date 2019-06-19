@@ -34,10 +34,10 @@ public class Predictor {
     private ArrayList<String> labels;
     private Interpreter tflite;
 
-    private boolean isPredictionDone;
     private ArrayList<LabelProbability> topPredictions;
 
-    private final int MIN_DRAWN_PIXEL = 35;
+    /* minimum 30 black pixels are needed before making a prediction*/
+    private final int MIN_DRAWN_PIXEL = 30;
 
     // CONSTRUCTOR
     // initialize the model here
@@ -56,8 +56,6 @@ public class Predictor {
 
     // predict method --> returns the top n predictions
     public void predict(Bitmap rawBitmap, final int numOfPredictions){
-
-        isPredictionDone = false;
 
         // array for storing result returned by tflite model
         // 2D array with size 1 x MODEL_OUTPUT_SIZE
@@ -117,6 +115,7 @@ public class Predictor {
                             topPredictions.add(list.get(i));
                         }
 
+                        // invoke the predictionCallback method
                         predictionListener.predictionCallback(topPredictions);
 
                     }
@@ -174,15 +173,4 @@ public class Predictor {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 
-    public ArrayList<String> getLabels() {
-        return labels;
-    }
-
-    public boolean isPredictionDone(){
-        return isPredictionDone;
-    }
-
-    public ArrayList<LabelProbability> getTopPredictions(){
-        return topPredictions;
-    }
 }
