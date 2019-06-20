@@ -1,7 +1,5 @@
 package paul.cipherresfeber.doodleme.Fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +16,6 @@ import java.util.ArrayList;
 import paul.cipherresfeber.doodleme.Adapters.ResultAdapter;
 import paul.cipherresfeber.doodleme.CustomData.ResultData;
 import paul.cipherresfeber.doodleme.LandingActivity;
-import paul.cipherresfeber.doodleme.MainActivity;
 import paul.cipherresfeber.doodleme.R;
 import paul.cipherresfeber.doodleme.Utility.Constants;
 
@@ -57,25 +54,8 @@ public class ResultFragment extends Fragment {
     }
 
     public void onBackPressed(){
-        // ask for user confirmation
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Play Again?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(getContext(), MainActivity.class));
-                getActivity().finish();
-            }
-        });
-        builder.setNegativeButton("Main Menu", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(getContext(), LandingActivity.class));
-                getActivity().finish();
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        startActivity(new Intent(getContext(), LandingActivity.class));
+        getActivity().finish();
     }
 
 }

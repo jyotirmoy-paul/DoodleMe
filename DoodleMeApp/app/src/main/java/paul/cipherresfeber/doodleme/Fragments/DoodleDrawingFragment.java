@@ -35,9 +35,9 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
     private DoodleDrawingKeeper doodleDrawingKeeper;
 
-    private final int MILLIS_BETWEEN_PREDICTIONS = 800;
-    private final float MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION = (float) 0.50;
-    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.10;
+    private final int MILLIS_BETWEEN_PREDICTIONS = 500;
+    private final float MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION = (float) 0.40;
+    private final float MIN_THRESHOLD_PROBABILITY = (float) 0.15;
     private final int NUMBER_OF_TOP_PREDICTIONS = 4;
     private final int TIME_PER_DOODLE_DRAWING = 20; /* in seconds */
 
@@ -177,18 +177,18 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
     @Override
     public void predictionCallback(ArrayList<LabelProbability> topPredictions) {
 
-        boolean success = false;
-
         // only if the said doodle shows up in the top position with probability more than
         // MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION then consider it a correct drawing
-        if(topPredictions.get(0).getLabelName().equals(doodleName) &&
-                topPredictions.get(0).getProbability() >= MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION){
-            countDownTimer.cancel();
-            success = true;
-            handleSuccess(doodleName);
+        for(int i=0; i<topPredictions.size(); i++){
+            if(topPredictions.get(i).getLabelName().equals(doodleName) &&
+                    topPredictions.get(i).getProbability() >= MIN_THRESHOLD_PROBABILITY_FOR_CORRECT_PREDICTION){
+                countDownTimer.cancel();
+                handleSuccess(doodleName);
+                return;
+            }
         }
 
-        if(!success && !stopPredicting)
+        if(!stopPredicting)
             handleFailure(topPredictions);
 
     }
@@ -199,10 +199,11 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
         String[] precedingSpeech = {
                 "Oh I know! It's ",
-                "Oh I know! It's ",
-                "Oh I know! It's ",
                 "Gotcha, it's ",
-                "I got it, it's "
+                "I got it, it's ",
+                "Oh I got it, it's ",
+                "Cool! It's ",
+                "Oh gotcha, it's "
         };
 
         String finalSpeech = precedingSpeech[random.nextInt(precedingSpeech.length)] + doodleName;
