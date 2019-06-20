@@ -34,25 +34,25 @@ $ sudo apt-get install jupyter
 
 ## Features
 - Neural Network based on CNN architecture
-- Trained on over 0.44 million unique doodle drawing
-- Tested against 88 thousands unique doodles, achieving an accuracy of 67.59%
+- Trained on over 0.605 million unique doodle drawing
+- Tested against 0.132 million unique doodles, achieving an accuracy of 68.29%
 - Robust android app included for testing and model
 
 ## CNN Architecture
 
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/cnn-architecture.png"/>
 
-> To get details of the CNN Architecture, check out the [Jupyter Notebook - CNN Architecture](https://github.com/jyotirmoy-paul/DoodleMe/blob/master/cnn_model_v5_28.ipynb)
+> To get details of the CNN Architecture, check out the [Jupyter Notebook - CNN Architecture](https://github.com/jyotirmoy-paul/DoodleMe/blob/master/cnn_model_v6_28_123.ipynb)
 
 - Image preprocessing before feeding into the neural net - this is done to keep only the important black colored pixel and removing other noises around it
 ```
 def preprocessing(img):
     img = img/255
-    return np.where(img < 0.2, 0, 1)
+    return np.where(img < 0.3, 0, 1)
 ```
 - The processed image is passed through two combinations of Convolution Layer and a Max Pooling layer for extracting important features from the image
-- The output from the convolution layer is flattened and feeded into the fully connected layer of 128 units
-- And finally, the output layer consists of 88 units, with the activation function `softmax`. The model outputs 88 probabilities corresponding to each of the 88 categories
+- The output from the convolution layer is flattened and feeded into the fully connected layer of 256 units, a dropout rate of 50% is used
+- And finally, the output layer consists of 123 units, with the activation function `softmax`. The model outputs 88 probabilities corresponding to each of the 123 categories
 
 ## Attribution
 
