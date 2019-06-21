@@ -1,7 +1,7 @@
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/icon.png" width="150" />
 
 # DoodleMe
-"Doodle Me" project is CNN (Convolutional Neural Network) based deep learning model which is trained to distinguish 88 different doodle categories.
+"Doodle Me" project is CNN (Convolutional Neural Network) based deep learning model which is trained to distinguish 123 different doodle categories.
 
 ## Android App live on Play Store
 The final android app can be found on Play Store: [Doodle Me](https://play.google.com/store/apps/details?id=paul.cipherresfeber.doodleme)
@@ -36,7 +36,9 @@ $ sudo apt-get install jupyter
 - Neural Network based on CNN architecture
 - Trained on over 0.605 million unique doodle drawing
 - Tested against 0.132 million unique doodles, achieving an accuracy of 68.29%
-- Robust android app included for testing and model
+- Robust android app included for testing and model evaluation
+- Sample Doodles predicted by model
+<img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/doodles.png"/>
 
 ## CNN Architecture
 
