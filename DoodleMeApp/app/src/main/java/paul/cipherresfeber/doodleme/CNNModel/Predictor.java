@@ -37,7 +37,7 @@ public class Predictor {
     private ArrayList<LabelProbability> topPredictions;
 
     /* minimum 30 black pixels are needed before making a prediction*/
-    private final int MIN_DRAWN_PIXEL = 30;
+    private final int MIN_DRAWN_PIXEL = 35; /* out of 784 pixels */
 
     // CONSTRUCTOR
     // initialize the model here

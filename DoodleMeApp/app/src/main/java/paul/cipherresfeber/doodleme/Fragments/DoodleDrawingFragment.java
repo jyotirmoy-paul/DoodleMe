@@ -29,6 +29,7 @@ import paul.cipherresfeber.doodleme.R;
 import paul.cipherresfeber.doodleme.Utility.Constants;
 import paul.cipherresfeber.doodleme.Utility.DoodleDrawingKeeper;
 import paul.cipherresfeber.doodleme.Views.DrawModel;
+import paul.cipherresfeber.doodleme.Views.DrawRenderer;
 import paul.cipherresfeber.doodleme.Views.DrawingCanvas;
 
 public class DoodleDrawingFragment extends Fragment implements View.OnTouchListener, PredictionListener {
@@ -273,6 +274,18 @@ public class DoodleDrawingFragment extends Fragment implements View.OnTouchListe
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        float screenDensity = metrics.density;
+        /*
+        *  y = 10 + (x - 2.0)/0.075
+        *
+        *  well i am doing this because,
+        *  with my phone of 2.0 density, width 10f works best but
+        *  on my other phone with density 2.75, width 20f works best
+        *  thus to generalize the relation I'm assuming the relation had to be linear
+        *
+        * */
+        DrawRenderer.setStrokeWidth(10 + ((screenDensity-(float)2.0)/(float)0.075));
 
         drawingCanvas = view.findViewById(R.id.drawingCanvas);
 

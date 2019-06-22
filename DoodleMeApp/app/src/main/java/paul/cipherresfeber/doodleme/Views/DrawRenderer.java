@@ -6,11 +6,17 @@ import android.graphics.Paint;
 
 public class DrawRenderer {
 
+    static float sw = 20f; /* default stroke width */
+
+    public static void setStrokeWidth(float strokeWidth) {
+        sw = strokeWidth;
+    }
+
     public static void renderModel(Canvas canvas, DrawModel model, Paint paint, int startLineIndex) {
 
         paint.setAntiAlias(true);
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(20f);
+        paint.setStrokeWidth(sw);
         int lineSize = model.getLineSize();
 
         for (int i = startLineIndex; i < lineSize; ++i) {
