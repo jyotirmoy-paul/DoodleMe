@@ -37,7 +37,7 @@ $ sudo apt-get install jupyter
 - Trained on over 0.605 million unique doodle drawing
 - Tested against 0.132 million unique doodles, achieving an accuracy of 68.29%
 - Robust android app included for testing and model evaluation
-- Sample Doodles predicted by model
+- Sample soodles predicted by the model
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/doodles.png"/>
 
 ## CNN Architecture
@@ -54,7 +54,7 @@ def preprocessing(img):
 ```
 - The processed image is passed through two combinations of Convolution Layer and a Max Pooling layer for extracting important features from the image
 - The output from the convolution layer is flattened and feeded into the fully connected layer of 256 units, a dropout rate of 50% is used
-- And finally, the output layer consists of 123 units, with the activation function `softmax`. The model outputs 88 probabilities corresponding to each of the 123 categories
+- And finally, the output layer consists of 123 units, with the activation function `softmax`. The model outputs 123 probabilities corresponding to each of the 123 categories
 
 ## Attribution
 
@@ -89,5 +89,5 @@ SOFTWARE.
 ```
 
 ## Contributing to Doodle Me
-All pull requests are welcome!
+All pull requests are welcome
 

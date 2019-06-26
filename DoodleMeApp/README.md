@@ -1,7 +1,7 @@
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/icon.png" width="150" />
 
 # Doodle Me - A machine which guesses your doodles!
-Deep Learning model to distinguish 88 different doodle categories along with an android app to play with just like Google Quick Draw (but offline), well that was the inspiration after all.
+Deep Learning model to distinguish 123 different doodle categories along with an android app to play with just like Google Quick Draw (but offline), well that was the inspiration after all.
 ## Getting Started
 The following instuctions will get you a copy of the project up and running on your local machine for development and testing purpose.
 ### Prerequisites
