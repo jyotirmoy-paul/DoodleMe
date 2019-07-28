@@ -37,7 +37,7 @@ $ sudo apt-get install jupyter
 - Trained on over 0.605 million unique doodle drawing
 - Tested against 0.132 million unique doodles, achieving an accuracy of 68.29%
 - Robust android app included for testing and model evaluation
-- Sample soodles predicted by the model
+- Sample doodles predicted by the model
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/doodles.png"/>
 
 ## CNN Architecture
