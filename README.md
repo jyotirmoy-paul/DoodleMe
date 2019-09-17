@@ -6,6 +6,13 @@
 ## Android App live on Play Store
 The final android app can be found on Play Store: [Doodle Me](https://play.google.com/store/apps/details?id=paul.cipherresfeber.doodleme)
 
+## Sample Screenshots
+<p align="center">
+  <img align="left" src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/samples/screenshot1.png" width=250>
+  <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/samples/screenshot2.png" width=250>
+  <img align="right" src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/samples/screenshot3.png" width=250>
+</p>
+
 ## Table of Contents
 - [Getting Started](#getting-started)
 - [Features](#features)
