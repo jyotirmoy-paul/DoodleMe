@@ -1,10 +1,10 @@
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/icon.png" width="150" />
 
 # DoodleMe
-"Doodle Me" project is CNN (Convolutional Neural Network) based deep learning model which is trained to distinguish 123 different doodle categories.
+<b>Doodle Me</b> is a CNN (Convolutional Neural Network) based deep learning project which is trained to distinguish 123 different doodle categories, with an included Android App, powered by `tflite`, for demostration purpose
 
-## Android App live on Play Store
-The final android app can be found on Play Store: [Doodle Me](https://play.google.com/store/apps/details?id=paul.cipherresfeber.doodleme)
+## Live on Play Store
+The working android app can be found on Play Store: [Doodle Me](https://play.google.com/store/apps/details?id=paul.cipherresfeber.doodleme)
 
 ## Sample Screenshots
 <p align="center">
@@ -40,20 +40,19 @@ $ sudo apt-get install jupyter
 > For correctly setting up the android studio project, refer [README.md](https://github.com/jyotirmoy-paul/DoodleMe/blob/master/DoodleMeApp/README.md)
 
 ## Features
-- Neural Network based on CNN architecture
+- The neural network is based on CNN architecture
 - Trained on over 0.605 million unique doodle drawing
 - Tested against 0.132 million unique doodles, achieving an accuracy of 68.29%
-- Robust android app included for testing and model evaluation
-- Sample doodles predicted by the model
+- Robust android app developed for testing and model evaluation
+- Following are few sample doodles predicted by the model
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/doodles.png"/>
 
 ## CNN Architecture
-
 <img src="https://github.com/jyotirmoy-paul/DoodleMe/blob/master/drawable-assets/cnn-architecture.png"/>
 
 > To get details of the CNN Architecture, check out the [Jupyter Notebook - CNN Architecture](https://github.com/jyotirmoy-paul/DoodleMe/blob/master/cnn_model_v6_28_123.ipynb)
 
-- Image preprocessing before feeding into the neural net - this is done to keep only the important black colored pixel and removing other noises around it
+- Image preprocessing before feeding into the neural net - this is done to keep only the important dark colored pixel and removing other noises around it
 ```
 def preprocessing(img):
     img = img/255
@@ -64,7 +63,6 @@ def preprocessing(img):
 - And finally, the output layer consists of 123 units, with the activation function `softmax`. The model outputs 123 probabilities corresponding to each of the 123 categories
 
 ## Attribution
-
 The Quick, Draw! Dataset has a collection of 50 Million drawings across 345 categories.
 This data is made available by Google, Inc. under the Creative Commons Attribution 4.0 International license.
 Google Creative Cloud: [Quick, Draw! Dataset](https://github.com/googlecreativelab/quickdraw-dataset)
